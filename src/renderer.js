@@ -20,7 +20,7 @@ if(localStorage.getItem("processList")){
 
 	for(let i = 0; i < processName.length; i++){
 		let newLi = document.createElement("li");
-		newLi.appendChild(document.createTextNode(processName[i]));
+		newLi.appendChild(document.createTextNode(processName[i] + ".exe"));
 		newLi.id = "PList-" + i;
 
 		let newBtn = document.createElement("button");
