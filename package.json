@@ -1,0 +1,26 @@
+{
+  "name": "Captureapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron --debug",
+    "package": "npm-run-all package:*",
+    "package:mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --out=out --osx-sign.identity='Developer ID Application: GitHub' --extend-info=assets/mac/info.plist",
+    "package:win": "electron-packager . --overwrite --platform=win32 --arch=x64 --out=out --icon=assets/app.ico --win32metadata.FileDescription=Captureapp"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "auto-launch": "^5.0.5",
+    "electron": "^3.0.8",
+    "lodash": "^4.17.11",
+    "moment": "^2.22.2",
+    "node-powershell": "^3.3.1"
+  },
+  "devDependencies": {
+    "electron-packager": "^12.2.0"
+  }
+}
