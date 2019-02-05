@@ -78,14 +78,6 @@ ipc.on("capture-on", (event) => {
 	});
 });
 
-ipc.on("set-pPath", (event) => {
-	dialog.showOpenDialog({
-		properties: ["openfile"]
-	}, (ppath) => {
-		if(ppath) event.sender.send("select-process", ppath);
-	});
-});
-
 const autoLaunch = new launch({
 	name: "Captureapp",
 	// eslint-disable-next-line no-undef

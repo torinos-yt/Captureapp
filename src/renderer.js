@@ -3,42 +3,9 @@ const fs = require("fs");
 const dscreeen = require("electron").screen;
 const ipc = require("electron").ipcRenderer;
 const moment = require("moment");
-const os = require("os");
-const powershell = require("node-powershell");
-const pathmod = require("path");
-const _ = require("lodash");
 const remote = require("electron").remote;
 
 const DirectoryBtn = document.getElementById("set-directory-btn");
-
-//起動時にlocalStrageにある監視アプリのリストを取得
-//同時に、要素分のli要素を生成
-let processName = [];
-if(localStorage.getItem("processList")){
-	processName = JSON.parse(localStorage.getItem("processList"));
-
-	for(let i = 0; i < processName.length; i++){
-		let newLi = document.createElement("li");
-		newLi.appendChild(document.createTextNode(processName[i] + ".exe"));
-		newLi.id = "PList-" + i;
-
-		let newBtn = document.createElement("button");
-		newBtn.appendChild(document.createTextNode("-"));
-		newBtn.id = "PList-Btn-" + i;
-		newLi.appendChild(newBtn);
-
-		const ProcessUl = document.getElementById("process-list");
-		ProcessUl.appendChild(newLi);
-
-		//要素生成と同時に、要素を削除するためのイベントハンドラを設置
-		newBtn.addEventListener("click", () => {
-			newLi.parentNode.removeChild(newLi);
-			newBtn.parentNode.removeChild(newBtn);
-			processName.splice(processName.indexOf(processName[i]));
-		});
-	}
-}
-let IntervalTime = 5.0;
 
 //保存するディレクトリを指定するためのipcイベントを送信
 let savepath = null;
@@ -58,33 +25,9 @@ ipc.on("capture-directory", (event, dirpath) => {
 	if(dirpath) savepath = dirpath;
 });
 
-//監視プロセスリストの追加
-function addProcessList(path, listnum){
-	const pName = pathmod.basename(path[0], ".exe");
-	processName.push(pName);
-
-	let newLi = document.createElement("li");
-	newLi.appendChild(document.createTextNode(pName + ".exe"));
-	newLi.id = "PList-" + listnum;
-
-	let newBtn = document.createElement("button");
-	newBtn.appendChild(document.createTextNode("-"));
-	newBtn.id = "PList-Btn-" + listnum;
-	newLi.appendChild(newBtn);
-
-	const ProcessUl = document.getElementById("process-list");
-	ProcessUl.appendChild(newLi);
-
-	//要素生成と同時に、要素を削除するためのイベントハンドラを設置
-	newBtn.addEventListener("click", () => {
-		newLi.parentNode.removeChild(newLi);
-		newBtn.parentNode.removeChild(newBtn);
-		processName.splice(processName.indexOf(pName));
-	});
-}
-
 //スクリーンショットをとる時間間隔を指定
 const timeInput = document.getElementById("time-interval");
+let IntervalTime = timeInput.value;
 timeInput.addEventListener("change", () =>{
 	IntervalTime = timeInput.value;
 });
