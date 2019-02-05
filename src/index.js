@@ -38,11 +38,12 @@ function createTrayicon(){
 
 app.on("ready", () =>{
 	mainWindow = new BrowserWindow({
-		width: 600,
-		height: 480,
+		width: 160,
+		height: 165,
 		skipTaskbar: true,
-		resizable: false,
-		show: false,
+		resizable: true,
+		alwaysOnTop : true,
+		frame: false,
 		fullscreenable: false,
 		title: "Captureapp",
 		autoHideMenuBar: true,

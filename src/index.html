@@ -1,15 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
+<html lang="ja" style="-webkit-app-region: drag">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="../node_modules/uikit/dist/css/uikit.min.css">
+	<link rel="stylesheet" href="style.css">
+
+	<script src="../node_modules/uikit/dist/js/JQuery-3.3.1.min.js"></script>
+	<script src="../node_modules/uikit/dist/js/uikit.min.js"></script>
+
+
+
 	<title>Preference</title>
 </head>
 <body>
-	<button id = "capture-btn">Set Folder</button>
-	<div id = "capture-log"></div>
-	<button id = "set-list-btn">Set Application</button>
-	<ul id = "process-list"></ul>
-	<input id = "time-interval" type="text" value = "5"><p>minute</p>
+	<div class="uk-container">
+		<div class="uk-grid">
+			<div class="uk-align-center uk-margin-small">
+					<div class="uk-margin-small-top">
+						<input class="uk-input uk-form-small margin-bottom" id = "time-interval" type="text" value = "5" size = "1">
+					</div>
+					<div class="nodrag" style="text-align: center">Minute</div>
+			</div>
+			<div class="uk-align-center uk-margin-small">
+				<div>
+					<input class="uk-checkbox uk-margin-small-left" type="checkbox" name="captured" id="captured">
+				</div>
+				<div class="nodrag">Auto</div>
+			</div>
+		</div>
+			<div class="uk-align-center uk-margin-remove-top uk-margin-remove-bottom">
+				<button class="uk-button uk-button-default uk-button-small uk-width-1-1 uk-margin-small uk-margin-remove-top" id="set-directory-btn">SetDir</button>
+			</div>
+			<div class="uk-align-center uk-margin-remove-top">
+					<button class="uk-button uk-button-default uk-width-1-1 uk-margin-small" id="capture-btn">Capture</button>
+			</div>
+	</div>
 
 	<script src = "renderer.js"></script>
 </body>

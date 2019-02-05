@@ -1,0 +1,23 @@
+input {
+	-webkit-app-region: no-drag;
+}
+
+button {
+	-webkit-app-region: no-drag;
+}
+
+.nodrag{
+	-webkit-app-region: no-drag;
+}
+
+.minuete-input{
+	display: inline-block;
+}
+
+.center{
+	text-align: center;
+}
+
+.margin-bottom{
+	margin-bottom: 3px!important;
+}
