@@ -23,6 +23,7 @@ DirectoryBtn.addEventListener("click", (event) => {
 
 ipc.on("capture-directory", (event, dirpath) => {
 	if(dirpath) savepath = dirpath;
+	localStorage.setItem("savePath", JSON.stringify(savepath));
 });
 
 //スクリーンショットをとる時間間隔を指定
@@ -64,7 +65,7 @@ function screenshotInterval(){
 				const capturetime = moment().format("HH.mm.ss");
 				const screenshotpath = pathdirdate + "/" + capturetime + "_" + source.name + ".jpg";
 
-				fs.writeFile(screenshotpath, source.thumbnail.toJPEG(80), (err) => {
+				fs.writeFile(screenshotpath, source.thumbnail.toJPEG(40), (err) => {
 					if(err) throw err;
 				});
 			}
@@ -77,9 +78,9 @@ ManualCapture.addEventListener("click", (event) =>{
 	screenshotInterval();
 });
 
-let ProcessExist = false;
+let autoCaptureCheck = document.getElementById("is-Auto-Captured");
 function DoneInterval_factorial(){
-	screenshotInterval();
+	if(autoCaptureCheck.checked) screenshotInterval();
 	setTimeout(DoneInterval_factorial, IntervalTime * 60000);
 }
 DoneInterval_factorial();

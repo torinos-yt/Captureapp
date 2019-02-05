@@ -12,11 +12,6 @@ let mainWindow = null;
 
 function createTrayicon(){
 	const contextMenu = Menu.buildFromTemplate([
-		{label: "Preference", click: () => {
-			mainWindow.focus();
-			mainWindow.show();
-		}},
-		{ type: "separator" },
 		{label: "Quit", click: () => {
 			mainWindow.close();
 			mainWindow = null;
