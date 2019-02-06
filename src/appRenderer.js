@@ -86,10 +86,6 @@ function DoneInterval_factorial(){
 }
 DoneInterval_factorial();
 
-document.getElementById("newwindow-test").addEventListener("click", (event) =>{
-	ipc.send("create-newwindow");
-});
-
 //終了時、設定をlocalStrageへ保存
 remote.getCurrentWindow().on("close", () => {
 	localStorage.setItem("savePath", JSON.stringify(savepath));

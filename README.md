@@ -1,5 +1,7 @@
 Captureapp
 
-監視対象のアプリが起動中、指定時間ごとに画面をキャプチャーするElectronアプリ
+branch : alwaysCapture
+
+常に自動で画面をキャプチャーするElectronアプリ
 
 only work on windows
