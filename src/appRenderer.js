@@ -76,6 +76,7 @@ function screenshotInterval(){
 const ManualCapture = document.getElementById("capture-btn");
 ManualCapture.addEventListener("click", (event) =>{
 	screenshotInterval();
+	ipc.send("create-newwindow");
 });
 
 let autoCaptureCheck = document.getElementById("is-Auto-Captured");
@@ -84,6 +85,10 @@ function DoneInterval_factorial(){
 	setTimeout(DoneInterval_factorial, IntervalTime * 60000);
 }
 DoneInterval_factorial();
+
+document.getElementById("newwindow-test").addEventListener("click", (event) =>{
+	ipc.send("create-newwindow");
+});
 
 //終了時、設定をlocalStrageへ保存
 remote.getCurrentWindow().on("close", () => {

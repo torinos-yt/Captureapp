@@ -73,6 +73,21 @@ ipc.on("capture-on", (event) => {
 	});
 });
 
+ipc.on("create-newwindow", (event) => {
+	let noteWindow = new BrowserWindow({
+		width: 450,
+		height: 230,
+		skipTaskbar: true,
+		autoHideMenuBar: true,
+		fullscreenable: false,
+		frame: false,
+		title: "Capture Discriprion",
+		parent: mainWindow,
+	});
+
+	noteWindow.loadURL(path.join("file://",  __dirname, "/note.html"));
+});
+
 const autoLaunch = new launch({
 	name: "Captureapp",
 	// eslint-disable-next-line no-undef

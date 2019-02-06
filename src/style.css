@@ -8,6 +8,7 @@ button {
 
 .nodrag{
 	-webkit-app-region: no-drag;
+	-webkit-user-select: none;
 }
 
 .minuete-input{
