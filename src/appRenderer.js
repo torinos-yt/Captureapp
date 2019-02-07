@@ -9,6 +9,7 @@ const DirectoryBtn = document.getElementById("set-directory-btn");
 
 //保存するディレクトリを指定するためのipcイベントを送信
 let savepath = null;
+let enableCapture = false;
 
 if (localStorage.getItem("savePath")) {
 	savepath = JSON.parse(localStorage.getItem("savePath"));
@@ -26,6 +27,10 @@ ipc.on("capture-directory", (event, dirpath) => {
 	localStorage.setItem("savePath", JSON.stringify(savepath));
 });
 
+ipc.on("enable-capture", (event) => {
+	enableCapture = true;
+});
+
 //スクリーンショットをとる時間間隔を指定
 const timeInput = document.getElementById("time-interval");
 let IntervalTime = timeInput.value;
@@ -34,8 +39,9 @@ timeInput.addEventListener("change", () =>{
 });
 
 //実際にスクリーンショットを実行する処理
-function screenshotInterval(){
+function screenshotInterval(text){
 	const DisplaySize = dscreeen.getPrimaryDisplay().size;
+	let txtContent = text;
 
 	let captureOptions = {
 		types: ["screen"],
@@ -50,6 +56,7 @@ function screenshotInterval(){
 	if(savepath === null) savepath = process.env[process.platform == "win32" ? "USERPROFILE" : "HOME"] + "/Documents";
 	const pathdir = savepath +  "/Captureapp";
 	const pathdirdate = pathdir + "/" +  moment().format("YYYY-MM-DD");
+	const capturetime = moment().format("HH.mm.ss");
 	if (!fs.existsSync(pathdir)) {
 		fs.mkdirSync(pathdir);
 	}
@@ -62,26 +69,33 @@ function screenshotInterval(){
 
 		sources.forEach( (source) => {
 			if(source.name === "Entire screen" || source.name === "Screen 1" || source.name === "Screen 2"){
-				const capturetime = moment().format("HH.mm.ss");
 				const screenshotpath = pathdirdate + "/" + capturetime + "_" + source.name + ".jpg";
 
-				fs.writeFile(screenshotpath, source.thumbnail.toJPEG(40), (err) => {
+				fs.writeFile(screenshotpath, source.thumbnail.toJPEG(30), (err) => {
 					if(err) throw err;
 				});
 			}
 		});
 	});
+
+	const txtpath = pathdirdate + "/" + capturetime + ".txt"
+	fs.writeFile(txtpath, txtContent, (err) => {
+		if(err) throw err;
+	});
 }
 
 const ManualCapture = document.getElementById("capture-btn");
 ManualCapture.addEventListener("click", (event) =>{
-	screenshotInterval();
 	ipc.send("create-newwindow");
 });
 
 let autoCaptureCheck = document.getElementById("is-Auto-Captured");
 function DoneInterval_factorial(){
-	if(autoCaptureCheck.checked) screenshotInterval();
+	if(autoCaptureCheck.checked && enableCapture){
+		enableCapture = false;
+		ipc.send("on-capture");
+		screenshotInterval("");
+	}
 	setTimeout(DoneInterval_factorial, IntervalTime * 60000);
 }
 DoneInterval_factorial();

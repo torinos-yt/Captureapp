@@ -9,6 +9,7 @@ let quit = false;
 let appIcon = null;
 
 let mainWindow = null;
+let transparentWindow = [];
 
 function createTrayicon(){
 	const contextMenu = Menu.buildFromTemplate([
@@ -36,7 +37,7 @@ app.on("ready", () =>{
 		width: 160,
 		height: 165,
 		skipTaskbar: true,
-		resizable: true,
+		resizable: false,
 		alwaysOnTop : true,
 		frame: false,
 		fullscreenable: false,
@@ -45,6 +46,30 @@ app.on("ready", () =>{
 	});
 	// eslint-disable-next-line no-undef
 	mainWindow.loadURL(path.join("file://",  __dirname, "/index.html"));
+
+	const dscreeen = require("electron").screen;
+	let Displays = dscreeen.getAllDisplays();
+	let transparentWindow = new Array(Displays.length);
+	let sumWidth = 0;
+	Displays.forEach((element) => {
+		let tpWindow = new BrowserWindow({
+			width: element.size.width,
+			height: element.size.height,
+			x: sumWidth,
+			y: 0,
+			transparent: true,
+			frame: false,
+			//movable: false,
+			parent: mainWindow,
+			hasShadow: false,
+		});
+		sumWidth += element.size.width;
+
+		tpWindow.maximize();
+		tpWindow.setIgnoreMouseEvents(true, {forward: true});
+		tpWindow.loadURL((path.join("file://",  __dirname, "/Catcher.html")));
+		transparentWindow.push(tpWindow);
+	});
 
 	mainWindow.on("close", (event) => {
 		if(!quit){
@@ -70,6 +95,15 @@ ipc.on("capture-on", (event) => {
 		properties: ["openDirectory"]
 	}, (dirpath) => {
 		if(dirpath) event.sender.send("capture-directory", dirpath);
+	});
+});
+
+ipc.on("mouseMoved", (event) => {
+	mainWindow.webContents.send("enable-capture");
+});
+ipc.on("on-capture", (event) => {
+	BrowserWindow.getAllWindows().forEach((element) =>{
+		element.webContents.send("captured");
 	});
 });
 
