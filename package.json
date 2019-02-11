@@ -16,12 +16,13 @@
   "dependencies": {
     "auto-launch": "^5.0.5",
     "electron": "^3.0.8",
+    "jquery": "^3.3.1",
+    "jsdom": "^13.2.0",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
-    "node-powershell": "^3.3.1"
+    "uikit": "^3.0.3"
   },
   "devDependencies": {
-    "electron-packager": "^12.2.0",
-    "uikit": "^3.0.3"
+    "electron-packager": "^12.2.0"
   }
 }

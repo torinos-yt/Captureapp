@@ -56,12 +56,16 @@ function screenshotInterval(text){
 	if(savepath === null) savepath = process.env[process.platform == "win32" ? "USERPROFILE" : "HOME"] + "/Documents";
 	const pathdir = savepath +  "/Captureapp";
 	const pathdirdate = pathdir + "/" +  moment().format("YYYY-MM-DD");
+	const pathdirtxt = pathdirdate + "/" + "txt";
 	const capturetime = moment().format("HH.mm.ss");
 	if (!fs.existsSync(pathdir)) {
 		fs.mkdirSync(pathdir);
 	}
 	if (!fs.existsSync(pathdirdate)) {
 		fs.mkdirSync(pathdirdate);
+	}
+	if (!fs.existsSync(pathdirtxt)) {
+		fs.mkdirSync(pathdirtxt);
 	}
 
 	capterer.getSources(captureOptions, (err, sources) => {
@@ -78,7 +82,7 @@ function screenshotInterval(text){
 		});
 	});
 
-	const txtpath = pathdirdate + "/" + capturetime + ".txt"
+	const txtpath = pathdirtxt + "/" + capturetime + ".txt"
 	fs.writeFile(txtpath, txtContent, (err) => {
 		if(err) throw err;
 	});
