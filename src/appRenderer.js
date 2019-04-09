@@ -4,6 +4,7 @@ const dscreeen = require("electron").screen;
 const ipc = require("electron").ipcRenderer;
 const moment = require("moment");
 const remote = require("electron").remote;
+const app = remote.app;
 
 const DirectoryBtn = document.getElementById("set-directory-btn");
 
@@ -19,12 +20,15 @@ if (localStorage.getItem("savePath")) {
 }
 
 DirectoryBtn.addEventListener("click", (event) => {
-	ipc.send("capture-on");
+	ipc.send("set-dir");
 });
 
 ipc.on("capture-directory", (event, dirpath) => {
 	if(dirpath) savepath = dirpath;
 	localStorage.setItem("savePath", JSON.stringify(savepath));
+	fs.writeFile(app.getPath("userData")+"/Local Storage/" + "path.txt", savepath, err => {
+		if(err) throw err;
+	});
 });
 
 ipc.on("enable-capture", (event) => {
@@ -63,6 +67,7 @@ function screenshotInterval(text){
 	}
 	if (!fs.existsSync(pathdirdate)) {
 		fs.mkdirSync(pathdirdate);
+		fs.writeFileSync(pathdirdate + "/archive.bat", "//&cls&node %0 %1&exit"  + "\n" + `const date = "${moment().format("YYYY-MM-DD")}"; const dgram = require('dgram');const Msg = new Buffer(date);const client = dgram.createSocket('udp4');async function Send(){client.send(Msg, 0, Msg.length, 1524, '127.0.0.1', (err, bytes)=>{if(err) throw err;client.close();process.exit(0);});}Send();`);
 	}
 	if (!fs.existsSync(pathdirtxt)) {
 		fs.mkdirSync(pathdirtxt);

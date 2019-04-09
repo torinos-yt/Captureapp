@@ -4,12 +4,13 @@ const ipc = require("electron").ipcMain;
 const dialog = require("electron").dialog;
 const {Menu, Tray} = require("electron");
 const launch = require("auto-launch");
+const dgram = require("dgram");
+const fs = require("fs");
 
 let quit = false;
 let appIcon = null;
 
 let mainWindow = null;
-let transparentWindow = [];
 
 function createTrayicon(){
 	const contextMenu = Menu.buildFromTemplate([
@@ -49,7 +50,6 @@ app.on("ready", () =>{
 
 	const dscreeen = require("electron").screen;
 	let Displays = dscreeen.getAllDisplays();
-	let transparentWindow = new Array(Displays.length);
 	let sumWidth = 0;
 	Displays.forEach((element) => {
 		let tpWindow = new BrowserWindow({
@@ -68,7 +68,6 @@ app.on("ready", () =>{
 		tpWindow.maximize();
 		tpWindow.setIgnoreMouseEvents(true, {forward: true});
 		tpWindow.loadURL((path.join("file://",  __dirname, "/Catcher.html")));
-		transparentWindow.push(tpWindow);
 	});
 
 	mainWindow.on("close", (event) => {
@@ -79,6 +78,25 @@ app.on("ready", () =>{
 	});
 
 	appIcon = createTrayicon();
+
+	const sock = dgram.createSocket("udp4", (msg, rinfo) => {
+		console.log("accept");
+		const archiveDate = msg.toString("ascii", 0, rinfo.size);
+		let archiveWindow = new BrowserWindow({
+			width: 1920,
+			height: 1080,
+			skipTaskbar: true,
+			autoHideMenuBar: true,
+			title: archiveDate + "archive",
+			useContentSize: true
+		});
+		archiveWindow.loadURL(path.join("file://",  __dirname, "/archive.html#" + archiveDate));
+		archiveWindow.maximize();
+		archiveWindow.focus();
+	});
+
+	sock.bind(1524, "127.0.0.1");
+
 });
 
 app.on("close", (event) => {
@@ -90,13 +108,26 @@ app.on("close", (event) => {
 	}
 });
 
-ipc.on("capture-on", (event) => {
+ipc.on("set-dir", (event) => {
 	dialog.showOpenDialog({
 		properties: ["openDirectory"]
 	}, (dirpath) => {
-		if(dirpath) event.sender.send("capture-directory", dirpath);
+		if(dirpath){
+			event.sender.send("capture-directory", dirpath);
+		}
 	});
 });
+
+ipc.on("print-pdf", (event) => {
+	event.sender.printToPDF({printBackground: true}, (err, buf) => {
+		if(err) throw err;
+		dialog.showSaveDialog({}, (filename) => {
+			fs.writeFile(filename + ".pdf", buf, err => {
+				if(err) throw err;
+			});
+		})
+	});
+})
 
 ipc.on("mouseMoved", (event) => {
 	mainWindow.webContents.send("enable-capture");

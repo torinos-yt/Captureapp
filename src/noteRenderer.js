@@ -38,6 +38,8 @@ function screenshotAndClose(text){
 	}
 	if (!fs.existsSync(pathdirdate)) {
 		fs.mkdirSync(pathdirdate);
+		fs.writeFileSync(pathdirdate + "/archive.bat", "//&cls&node %0 %1&exit"  + "\n" + `const date = "${moment().format("YYYY-MM-DD")}"; const dgram = require('dgram');const Msg = new Buffer(date);const client = dgram.createSocket('udp4');async function Send(){client.send(Msg, 0, Msg.length, 1524, '127.0.0.1', (err, bytes)=>{if(err) throw err;client.close();process.exit(0);});}Send();`);
+
 	}
 	if (!fs.existsSync(pathdirtxt)) {
 		fs.mkdirSync(pathdirtxt);
