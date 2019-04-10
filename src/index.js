@@ -85,7 +85,7 @@ app.on("ready", () =>{
 		let archiveWindow = new BrowserWindow({
 			width: 1920,
 			height: 1080,
-			skipTaskbar: true,
+			skipTaskbar: false,
 			autoHideMenuBar: true,
 			title: archiveDate + "archive",
 			useContentSize: true
