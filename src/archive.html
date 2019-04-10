@@ -23,5 +23,25 @@
         </div>
     </div>
     <script src="archiveRenderer.js"></script>
+
+    <template id="imgBox">
+        <div>
+        <div class="uk-inline">
+            <img src="" alt="">
+            <div class="uk-overlay uk-light uk-position-top">
+                <button class="removetoggle" style="-webkit-filter: drop-shadow(1px 1px 2px #444)" uk-toggle="" uk-close></a>
+            </div>
+        </div>
+        <div id="modal" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                 <button class="uk-modal-close-default" type="button" uk-close></button>
+                 <p>Remove this image?</p>
+                 <p class="uk-text-right">
+                     <button class="uk-button uk-button-danger uk-modal-close" type="button">Yes</button>
+                 </p>
+            </div>
+        </div>
+        </div>
+    </template>
 </body>
 </html>

@@ -118,11 +118,13 @@ ipc.on("set-dir", (event) => {
 	});
 });
 
-ipc.on("print-pdf", (event) => {
+ipc.on("print-pdf", (event, date) => {
 	event.sender.printToPDF({printBackground: true}, (err, buf) => {
 		if(err) throw err;
-		dialog.showSaveDialog({}, (filename) => {
-			fs.writeFile(filename + ".pdf", buf, err => {
+		dialog.showSaveDialog( {filters: [
+			{name : "PDF Document", extensions: ["pdf"]}
+		]}, filename => {
+			fs.writeFile(filename, buf, err => {
 				if(err) throw err;
 			});
 		})

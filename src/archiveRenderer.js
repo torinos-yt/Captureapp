@@ -5,10 +5,12 @@ const {remote} = require("electron");
 const {Menu, MenuItem} = remote
 const ipc = require("electron").ipcRenderer;
 
+
+const date = location.hash.substring(1);
 const menu = new Menu();
 menu.append(new MenuItem({ label: "Print", click() {
     console.log("print");
-    ipc.send("print-pdf");
+    ipc.send("print-pdf", date);
  } }));
 
 window.addEventListener("contextmenu", err => {
@@ -16,13 +18,47 @@ window.addEventListener("contextmenu", err => {
     menu.popup({ window: remote.getCurrentWindow() })
 }, false);
 
-const date = location.hash.substring(1);
+
 const imageUl = document.getElementById("image-list-ul");
 
 const title = document.getElementById("title-date");
 title.innerText = date + " Archive";
 
 let Dirpath;
+
+function createImgbox(imgsrc, idnum, newDiv){
+    const imgBox = document.getElementById("imgBox")
+    const instance = document.importNode(imgBox.content, true);
+    instance.querySelector("div").id = "fragment" + idnum;
+
+    const newimg = instance.querySelector("img");
+    newimg.src = "file:///" + Dirpath + "/" +  imgsrc;
+    instance.querySelector(".removetoggle").setAttribute("uk-toggle", "target: #modal" + idnum);
+
+    const modal = instance.querySelector("#modal");
+    modal.id =  "modal" + idnum;
+
+    const removeBtn = modal.querySelector(".uk-button");
+
+    removeBtn.addEventListener("click", () => {
+        const imgCount = newDiv.childElementCount;
+        if(imgCount == 1){
+            fs.unlink(Dirpath + "/" +  imgsrc, err => {
+                if(err) throw err;
+            });
+            fs.unlink(Dirpath + "/txt/" + imgsrc.split("_")[0] + ".txt", err => {
+                if(err) throw err;
+            })
+            newDiv.parentElement.remove();
+        }else{
+            fs.unlink(Dirpath + "/" +  imgsrc, err => {
+                if(err) throw err;
+            });
+            document.querySelector("#fragment" + idnum).remove();
+        }
+    });
+    return instance;
+}
 
 Promise.resolve()
     .then(() => {
@@ -45,13 +81,19 @@ Promise.resolve()
                     const newli = document.createElement("li");
                     newli.classList.add("uk-grid");
 
-                    const newdivimg = document.createElement("div");
-                    newdivimg.classList.add("uk-width-1-3");
-                    let newImg = document.createElement("img");
-                    newImg.src = "file:///" + Dirpath + "/" +  imagefiles[i];
-                    newdivimg.appendChild(newImg);
+                    const newimgdiv = document.createElement("div");
+                    newimgdiv.classList.add("uk-width-1-3");
 
                     const crrTime = imagefiles[i].split("_")[0];
+                    newimgdiv.appendChild(createImgbox(imagefiles[i], i, newimgdiv));
+                    if(i+1 < imagefiles.length){
+                        const nextTime = imagefiles[i+1].split("_")[0];
+                        if(crrTime == nextTime){
+                            i++;
+                            newimgdiv.appendChild(createImgbox(imagefiles[i], i, newimgdiv));
+                         }
+                    }
+
                     const txtpath = Dirpath + "/txt/" +  crrTime + ".txt";
                     const newdivinput = document.createElement("div");
                     newdivinput.classList.add("uk-width-2-3");
@@ -68,16 +110,7 @@ Promise.resolve()
                     });
                     newdivinput.appendChild(newinput);
 
-                    if(i+1 < imagefiles.length){
-                        const nextTime = imagefiles[i+1].split("_")[0];
-                        if(crrTime == nextTime){
-                            newImg = document.createElement("img");
-                            newImg.src = "file:///" + Dirpath + "/" + imagefiles[i+1];
-                             newdivimg.appendChild(newImg);
-                             i++;
-                         }
-                    }
-                    newli.appendChild(newdivimg);
+                    newli.appendChild(newimgdiv);
                     newli.appendChild(newdivinput);
                     imageUl.appendChild(newli);
                 };
