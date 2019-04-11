@@ -8,7 +8,7 @@ const ipc = require("electron").ipcRenderer;
 
 const date = location.hash.substring(1);
 const menu = new Menu();
-menu.append(new MenuItem({ label: "Print", click() {
+menu.append(new MenuItem({ label: "Print PDF", click() {
     console.log("print");
     ipc.send("print-pdf", date);
  } }));
@@ -66,6 +66,16 @@ Promise.resolve()
             fs.readFile(app.getPath("userData")+"/Local Storage/path.txt", (err, data) => {
                 if(err) throw err;
                 Dirpath = data + "/Captureapp/" + date;
+
+                const dialytxt = document.getElementById("dialy");
+                fs.readFile(Dirpath + "/txt/_Dialy.txt", (err, data) => {
+                    dialytxt.innerText = data;
+                });
+                dialytxt.addEventListener("change", () => {
+                    fs.writeFile(Dirpath + "/txt/_Dialy.txt", dialytxt.value, err => {
+                        if(err) throw err;
+                    });
+                });
                 console.log(Dirpath);
                 resolve();
             });
@@ -79,12 +89,20 @@ Promise.resolve()
                 //console.log(textfiles);
                 for(let i = 0, cnt = 0; i < imagefiles.length; i++, cnt++){
                     const newli = document.createElement("li");
-                    newli.classList.add("uk-grid");
+                    newli.classList.add("uk-grid", "uk-margin-medium-left", "uk-margin-small-right");
+                    newli.setAttribute("style", "break-inside: avoid");
 
                     const newimgdiv = document.createElement("div");
-                    newimgdiv.classList.add("uk-width-1-3");
+                    newimgdiv.classList.add("uk-width-2-5");
 
                     const crrTime = imagefiles[i].split("_")[0];
+
+                    const timeThumb = document.createElement("span");
+                    timeThumb.classList.add("uk-width-expand", "uk-text-middle", "uk-text-large", "uk-padding-remove");
+                    const times = crrTime.split(".");
+                    timeThumb.textContent = times[0] + ":" + times[1] + "." + times[2];
+                    newli.appendChild(timeThumb);
+
                     newimgdiv.appendChild(createImgbox(imagefiles[i], i, newimgdiv));
                     if(i+1 < imagefiles.length){
                         const nextTime = imagefiles[i+1].split("_")[0];
@@ -96,7 +114,7 @@ Promise.resolve()
 
                     const txtpath = Dirpath + "/txt/" +  crrTime + ".txt";
                     const newdivinput = document.createElement("div");
-                    newdivinput.classList.add("uk-width-2-3");
+                    newdivinput.classList.add("uk-width-1-2");
                     let newinput = document.createElement("textarea");
                     newinput.setAttribute("rows", 10);
                     newinput.classList.add("uk-textarea", "uk-form-blank");

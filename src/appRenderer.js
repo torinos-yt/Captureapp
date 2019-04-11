@@ -43,7 +43,7 @@ timeInput.addEventListener("change", () =>{
 });
 
 //実際にスクリーンショットを実行する処理
-function screenshotInterval(text){
+function CaptureScreen(text){
 	const DisplaySize = dscreeen.getPrimaryDisplay().size;
 	let txtContent = text;
 
@@ -71,6 +71,7 @@ function screenshotInterval(text){
 	}
 	if (!fs.existsSync(pathdirtxt)) {
 		fs.mkdirSync(pathdirtxt);
+		fs.writeFileSync(pathdirtxt + "/_Dialy.txt", "");
 	}
 
 	capterer.getSources(captureOptions, (err, sources) => {
@@ -103,11 +104,15 @@ function DoneInterval_factorial(){
 	if(autoCaptureCheck.checked && enableCapture){
 		enableCapture = false;
 		ipc.send("on-capture");
-		screenshotInterval("");
+		CaptureScreen("");
 	}
 	setTimeout(DoneInterval_factorial, IntervalTime * 60000);
 }
 DoneInterval_factorial();
+
+ipc.on("Manual-capture", (event, txt) => {
+	CaptureScreen(txt);
+})
 
 //終了時、設定をlocalStrageへ保存
 remote.getCurrentWindow().on("close", () => {

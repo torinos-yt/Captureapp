@@ -32,7 +32,6 @@ function createTrayicon(){
 	return trayIcon;
 }
 
-
 app.on("ready", () =>{
 	mainWindow = new BrowserWindow({
 		width: 160,
@@ -119,7 +118,7 @@ ipc.on("set-dir", (event) => {
 });
 
 ipc.on("print-pdf", (event, date) => {
-	event.sender.printToPDF({printBackground: true}, (err, buf) => {
+	event.sender.printToPDF({printBackground: false, pageSize: "A3"}, (err, buf) => {
 		if(err) throw err;
 		dialog.showSaveDialog( {filters: [
 			{name : "PDF Document", extensions: ["pdf"]}
@@ -153,6 +152,10 @@ ipc.on("create-newwindow", (event) => {
 	});
 
 	noteWindow.loadURL(path.join("file://",  __dirname, "/note.html"));
+});
+
+ipc.on("Manual-capture", (event, txt) => {
+	mainWindow.webContents.send("Manual-capture", txt);
 });
 
 const autoLaunch = new launch({
